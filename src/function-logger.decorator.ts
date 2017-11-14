@@ -36,7 +36,9 @@ export const getMonkeyPatchMethod = function (method: Function, methodName: stri
     logMessage(true, this, methodName, method, args, options);
     const result = method.apply(this, args);
     logMessage(false, this, methodName, method, args, options);
-    
+    const logFunction = options.logFunction || console.info;
+    logFunction(`Result: ${JSON.stringify(result)}`);
+
     return result;
   };
 };
