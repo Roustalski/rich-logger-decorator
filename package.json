@@ -8,9 +8,10 @@
     "prepublish": "rm -rf ./dist && tsc -p tsconfig.json",
     "clean_js": "rm -rf **/**/*.js"
   },
-  "typings": "./dist/index.d.ts",
+  "typings": "./dist/src/index.d.ts",
   "maintainers": [
-    "Dor Moshe"
+    "Dor Moshe",
+    "Russ Watson"
   ],
   "repository": {
     "url": "https://github.com/dormd/rich-logger-decorator"
