@@ -15,14 +15,14 @@ var getArgsStrings = function (argValues, func, options) {
     }).map(function (argNameIndex) {
         if (argNameIndex === -1 || argNameIndex >= argValues.length)
             return '';
-        return "[" + argNames[argNameIndex] + "=" + argValues[argNameIndex] + "]";
+        return "[" + argNames[argNameIndex] + "=" + JSON.stringify(argValues[argNameIndex]) + "]";
     });
 };
 var getPropertiesStrings = function (withClassProperties, targetInstance) {
     var allProps = _.keys(targetInstance);
     var requiredProps = (withClassProperties instanceof Array) ? _.intersection(allProps, withClassProperties) : allProps;
     return requiredProps.map(function (propName) {
-        return "[" + propName + "=" + targetInstance[propName] + "]";
+        return "[" + propName + "=" + JSON.stringify(targetInstance[propName]) + "]";
     });
 };
 var getTime = function () {
@@ -30,7 +30,7 @@ var getTime = function () {
     return timeStr;
 };
 export var logMessage = function (isStart, targetInstance, functionName, originalFunction, functionArgsVals, options) {
-    var time = options.withTime ? "[" + getTime() : '';
+    var time = options.withTime ? "[" + getTime() + "] " : '';
     var className = getClassName(targetInstance);
     var classNameStr = className ? className + "::" : '';
     var logFunction = options.logFunction || console.info;
