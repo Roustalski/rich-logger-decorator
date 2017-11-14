@@ -14,23 +14,23 @@ const getArgsStrings = function(argValues: any[], func: Function, options: Funct
   if(argNames === null)
     return [];
 
-  const requiredArgNames = (options.withArgs instanceof Array) ? options.withArgs : argNames; 
-  
+  const requiredArgNames = (options.withArgs instanceof Array) ? options.withArgs : argNames;
+
   return requiredArgNames.map(function (argName: string): number {
     return argNames.indexOf(argName);
   }).map(function (argNameIndex: number): string {
     if (argNameIndex === -1 || argNameIndex >= argValues.length) return '';
 
-    return `[${argNames[argNameIndex]}=${argValues[argNameIndex]}]`
+    return `[${argNames[argNameIndex]}=${JSON.stringify(argValues[argNameIndex])}]`
   });
 };
 
 const getPropertiesStrings = function(withClassProperties: boolean | string[], targetInstance): string[] {
   const allProps = _.keys(targetInstance);
-  const requiredProps = (withClassProperties instanceof Array) ? _.intersection(allProps, withClassProperties) : allProps; 
+  const requiredProps = (withClassProperties instanceof Array) ? _.intersection(allProps, withClassProperties) : allProps;
 
   return requiredProps.map(function (propName: string): string {
-    return `[${propName}=${targetInstance[propName]}]`
+    return `[${propName}=${JSON.stringify(targetInstance[propName])}]`
   });
 };
 
@@ -40,11 +40,11 @@ const getTime = function(): string {
 };
 
 export const logMessage = function(isStart: boolean, targetInstance, functionName, originalFunction, functionArgsVals, options: FunctionLoggerOptions): void {
-  const time = options.withTime ? `[${getTime()}` : ''
+  const time = options.withTime ? `[${getTime()}] ` : ''
 
   const className = getClassName(targetInstance);
   const classNameStr = className ? `${className}::` : '';
-  
+
   const logFunction = options.logFunction || console.info;
 
   const args = options.withArgs ? getArgsStrings(functionArgsVals, originalFunction, options) : null;
