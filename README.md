@@ -1,3 +1,33 @@
+# Russ Notes
+
+To address:
+   https://github.com/dormd/rich-logger-decorator/issues/2
+   https://github.com/dormd/rich-logger-decorator/issues/3
+
+FYI, I totally hijacked the logger mechanism. In stead of getting multiple logger output, you will get a single log in the following format:
+
+```json
+2017-11-14T16:39:09.241Z	55f8fd21-c95a-11e7-8f28-7d9dbd8551f0
+{
+    "message": "[11/14/2017 4:39:09 PM] PersonService::get",
+    "args": [
+        "[name=\"1\"]"
+    ],
+    "props": [
+        "[_repo={\"_tableName\":\"---truncated---\",\"_timestamps\":true,\"_uuidFields\":[\"id\"]}]"
+    ],
+    "result": "{\"id\":\"1\",\"name\":\"Sweet name bruh\"}"
+}
+```
+
+I was tired of wading through the logger noise on AWS Cloudwatch 😲
+
+Test it out:
+`npm install --save github:Roustalski/rich-logger-decorator`
+
+
+TODO: Reconcile and agree on changes and merge into a single repo.
+
 # rich-logger-decorator
 Rich Logger Typescript Decorator for Easy Coding &amp; Debugging
 
@@ -137,7 +167,7 @@ All of the options are optional.
 
 **DefaultFunctionLoggerOptions**
 
-`defaultFunctionLoggerOptions` is an object with default values for `LoggerOptions`. 
+`defaultFunctionLoggerOptions` is an object with default values for `LoggerOptions`.
 The default values are:
 - **withArgs** — true
 - **withTime** — true
