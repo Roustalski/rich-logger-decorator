@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { defaultFunctionOptions } from './default-options';
-import { logMessage } from './messages.helper';
+import { generateSingleMessage } from './messages.helper';
 var logger = function (options) {
     if (options === void 0) { options = defaultFunctionOptions; }
     return function (target, methodName, descriptor) {
@@ -29,24 +29,9 @@ export var getMonkeyPatchMethod = function (method, methodName, options) {
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        logMessage(true, this, methodName, method, args, options);
         var result = method.apply(this, args);
-        logMessage(false, this, methodName, method, args, options);
         var logFunction = options.logFunction || console.info;
-        if (result instanceof Promise) {
-            result
-                .then(function (val) {
-                logFunction("Promised Result: " + JSON.stringify(val));
-                return val;
-            })
-                .catch(function (reason) {
-                logFunction("Rejected Promise: " + JSON.stringify(reason));
-                return reason;
-            });
-        }
-        else {
-            logFunction("Result: " + JSON.stringify(result));
-        }
+        generateSingleMessage(this, methodName, method, args, options, result).then(function (message) { return logFunction(message); });
         return result;
     };
 };

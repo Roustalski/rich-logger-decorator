@@ -45,4 +45,37 @@ export var logMessage = function (isStart, targetInstance, functionName, origina
     args && logFunction("\tFunction arguments:\t" + args.join(' '));
     props && logFunction("\tClass properties:\t" + props.join(' '));
 };
+export var generateSingleMessage = function (targetInstance, functionName, originalFunction, functionArgsVals, options, result) {
+    var time = options.withTime ? "[" + getTime() + "] " : '';
+    var className = getClassName(targetInstance);
+    var classNameStr = className ? className + "::" : '';
+    var logFunction = options.logFunction || console.info;
+    var args = options.withArgs ? getArgsStrings(functionArgsVals, originalFunction, options) : null;
+    var props = options.withClassProperties ? getPropertiesStrings(options.withClassProperties, targetInstance) : null;
+    return new Promise(function (resolve) {
+        var response = {
+            message: "" + time + classNameStr + functionName,
+            args: args,
+            props: props,
+            result: ""
+        };
+        if (result instanceof Promise) {
+            result
+                .then(function (val) {
+                response.result = JSON.stringify(val);
+                resolve(JSON.stringify(response));
+                return val;
+            })
+                .catch(function (reason) {
+                response.result = "Rejected Promise: " + JSON.stringify(reason);
+                resolve(JSON.stringify(response));
+                return reason;
+            });
+        }
+        else {
+            response.result = JSON.stringify(result);
+            resolve(JSON.stringify(response));
+        }
+    });
+};
 //# sourceMappingURL=messages.helper.js.map

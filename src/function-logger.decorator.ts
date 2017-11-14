@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { FunctionLoggerOptions } from './interfaces';
 import { defaultFunctionOptions } from './default-options';
-import { logMessage } from './messages.helper';
+import { generateSingleMessage } from './messages.helper';
 
 const logger = function (options = defaultFunctionOptions): Function {
   return function (target, methodName: string, descriptor) {
@@ -33,24 +33,9 @@ const disableMethodLogger = function (): Function {
 
 export const getMonkeyPatchMethod = function (method: Function, methodName: string, options: FunctionLoggerOptions): Function {
   return function (...args) {
-    logMessage(true, this, methodName, method, args, options);
     const result = method.apply(this, args);
-    logMessage(false, this, methodName, method, args, options);
     const logFunction = options.logFunction || console.info;
-    if (result instanceof Promise) {
-      result
-        .then((val) => {
-          logFunction(`Promised Result: ${JSON.stringify(val)}`);
-          return val;
-        })
-        .catch(reason => {
-          logFunction(`Rejected Promise: ${JSON.stringify(reason)}`);
-          return reason;
-        });
-    } else {
-      logFunction(`Result: ${JSON.stringify(result)}`);
-    }
-
+    generateSingleMessage(this, methodName, method, args, options, result).then(message => logFunction(message));
     return result;
   };
 };
