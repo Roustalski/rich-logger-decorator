@@ -3,8 +3,8 @@ import { FunctionLoggerOptions } from './interfaces';
 import { defaultFunctionOptions } from './default-options';
 import { logMessage } from './messages.helper';
 
-const logger = function(options = defaultFunctionOptions): Function {
-  return function(target, methodName: string, descriptor) {
+const logger = function (options = defaultFunctionOptions): Function {
+  return function (target, methodName: string, descriptor) {
     if (descriptor === undefined) {
       descriptor = Object.getOwnPropertyDescriptor(target, methodName);
     }
@@ -18,7 +18,7 @@ const logger = function(options = defaultFunctionOptions): Function {
   };
 };
 
-const disableMethodLogger = function(): Function {
+const disableMethodLogger = function (): Function {
   return function (target, methodName: string, descriptor) {
     if (descriptor === undefined) {
       descriptor = Object.getOwnPropertyDescriptor(target, methodName);
@@ -32,12 +32,24 @@ const disableMethodLogger = function(): Function {
 };
 
 export const getMonkeyPatchMethod = function (method: Function, methodName: string, options: FunctionLoggerOptions): Function {
-  return function(...args) {
+  return function (...args) {
     logMessage(true, this, methodName, method, args, options);
     const result = method.apply(this, args);
     logMessage(false, this, methodName, method, args, options);
     const logFunction = options.logFunction || console.info;
-    logFunction(`Result: ${JSON.stringify(result)}`);
+    if (result instanceof Promise) {
+      result
+        .then((val) => {
+          logFunction(`Promised Result: ${JSON.stringify(val)}`);
+          return val;
+        })
+        .catch(reason => {
+          logFunction(`Rejected Promise: ${JSON.stringify(reason)}`);
+          return reason;
+        });
+    } else {
+      logFunction(`Result: ${JSON.stringify(result)}`);
+    }
 
     return result;
   };

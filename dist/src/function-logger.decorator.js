@@ -33,7 +33,20 @@ export var getMonkeyPatchMethod = function (method, methodName, options) {
         var result = method.apply(this, args);
         logMessage(false, this, methodName, method, args, options);
         var logFunction = options.logFunction || console.info;
-        logFunction("Result: " + JSON.stringify(result));
+        if (result instanceof Promise) {
+            result
+                .then(function (val) {
+                logFunction("Promised Result: " + JSON.stringify(val));
+                return val;
+            })
+                .catch(function (reason) {
+                logFunction("Rejected Promise: " + JSON.stringify(reason));
+                return reason;
+            });
+        }
+        else {
+            logFunction("Result: " + JSON.stringify(result));
+        }
         return result;
     };
 };
